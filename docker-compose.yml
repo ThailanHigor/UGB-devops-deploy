@@ -1,11 +1,13 @@
 services:
   site1:
+    container_name: site1
     build:
       context: /opt/sites/site1
     networks:
       - sites-network
 
   site2:
+    container_name: site2
     build:
       context: /opt/sites/site2
     networks:
@@ -13,10 +15,12 @@ services:
 
   nginx-proxy:
     image: nginx:alpine
+    container_name: nginx-proxy
     ports:
       - "80:80"
     volumes:
-      - /opt/stack/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /opt/sites/nginx/site1.conf:/etc/nginx/conf.d/site1.conf:ro
+      - /opt/sites/nginx/site2.conf:/etc/nginx/conf.d/site2.conf:ro
     depends_on:
       - site1
       - site2
@@ -25,3 +29,4 @@ services:
 
 networks:
   sites-network:
+    driver: bridge
